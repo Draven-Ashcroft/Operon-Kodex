@@ -1,131 +1,140 @@
 <p align="center">
-  <img src="assets/repo-banner.png" alt="Operonium Banner" width="100%">
+  <img src="assets/repo-banner.png" alt="Lac Operon Simulator Banner" width="100%">
 </p>
 
-<h1 align="center">🧬 Operonium</h1>
+<h1 align="center">🧬 Lac Operon Simulator</h1>
 
 <p align="center">
-  <strong>Where gene regulation comes to life.</strong>
-</p>
-
-<p align="center">
-  Interactive simulation of the <em>lac operon</em> in <em>Escherichia coli</em> K-12
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Version-v4.7-00E5A0" alt="Version">
-  <img src="https://img.shields.io/badge/Scientific-Accurate-00E5A0" alt="Scientific">
-  <img src="https://img.shields.io/badge/Open%20Source-MIT-9944EE" alt="Open Source">
+Interactive visualization of the <b>Lac Operon</b> in <i>Escherichia coli K-12</i><br>
+Gene Regulation • Transcription • Translation • Lactose Metabolism
 </p>
 
 ---
 
-## Overview
+## 📖 Overview
 
-Operonium is an interactive educational and scientific visualization platform that demonstrates how the **lac operon** regulates gene expression in *E. coli*.
+**Lac Operon Simulator** is an interactive educational visualization that demonstrates how *Escherichia coli* regulates lactose metabolism through the coordinated expression of the **lac operon**.
 
-The simulator models:
-
-* LacI repressor binding and release
-* RNA polymerase recruitment
-* Operon transcription
-* Ribosome-mediated translation
-* β-Galactosidase production (LacZ)
-* Lactose permease production (LacY)
-* Environmental lactose responses
-* Dynamic gene regulation states
+The simulation presents molecular events in a clear, step-by-step manner, making one of biology's most important gene regulation systems easier to understand.
 
 ---
 
-## Features
+## 🧬 Features
 
-### 🧬 Gene Regulation
-
-* LacI repressor interactions
-* Operator and promoter dynamics
-* Inducer-dependent activation
-
-### 📝 Transcription
-
-* RNA polymerase movement
-* Real-time mRNA synthesis
-* Operon-wide transcription visualization
-
-### ⚙️ Translation
-
-* Ribosome tracking
-* Protein synthesis animation
-* LacZ, LacY, and LacA production
-
-### 🎓 Educational Visualization
-
-* Molecular animations
-* Scientific annotations
-* Interactive learning experience
+- Interactive animation
+- Scientific illustrations
+- Step-by-step narration
+- Accurate transcription and translation workflow
+- Visualization of lacZ, lacY and lacA gene expression
+- Responsive design
+- Built with HTML, CSS and Vanilla JavaScript
 
 ---
 
-## Biological Background
+## 🔬 Biological Workflow
 
-The lac operon is a classic model of bacterial gene regulation.
+### Phase 1 — Gene Regulation
 
-**Without lactose**
+- LacI repressor synthesis
+- Repressor binds operator
+- Lactose enters the cell
+- Allolactose inactivates the repressor
+- RNA Polymerase initiates transcription
 
-* LacI binds the operator
-* RNA polymerase is blocked
-* Gene expression is repressed
+### Phase 2 — Translation
 
-**With lactose**
+- Ribosome reads transcribed mRNA
+- LacZ translation begins
+- β-Galactosidase formed
+- LacY translation begins
+- Permease formed
+- LacA translation begins
+- Transacetylase formed
 
-* Allolactose inactivates LacI
-* Repression is removed
-* Transcription begins
-* Lac proteins are synthesized
+### Phase 3 — Lactose Utilization
 
-This allows *E. coli* to express lactose-metabolizing genes only when needed.
+- Lactose transport
+- Lactose breakdown
+- Cellular utilization of lactose
 
 ---
 
-## Operon Architecture
+## 🎯 Learning Objectives
+
+This simulator helps learners understand:
+
+- Gene regulation in prokaryotes
+- Operon organization
+- Transcription
+- Translation
+- Protein synthesis
+- Lactose metabolism in *E. coli*
+
+Suitable for:
+
+- Undergraduate Biology
+- Molecular Biology
+- Genetics
+- Biotechnology
+- Microbiology
+- Classroom demonstrations
+
+---
+
+## 🛠️ Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
+- SVG Graphics
+
+---
+
+## 📂 Repository Structure
 
 ```text
-LacI → Promoter → Operator → lacZ → lacY → lacA
-```
-
-| Gene | Product                        | Function                                  |
-| ---- | ------------------------------ | ----------------------------------------- |
-| lacZ | β-Galactosidase                | Breaks lactose into glucose and galactose |
-| lacY | Lactose Permease               | Imports lactose into the cell             |
-| lacA | Thiogalactoside Transacetylase | Accessory enzyme                          |
-
----
-
-## Getting Started
-
-```bash
-git clone https://github.com/YOUR_USERNAME/Operonium.git
-
-cd Operonium
-
-npm install
-
-npm run dev
-```
+.
+├── index.html
+├── assets/
+│   ├── social-preview.png
+│   ├── images/
+│   └── icons/
+├── css/
+├── js/
+└── README.md
 
 ---
 
-## Contributing
+📜 License
 
-Contributions, scientific feedback, and bug reports are welcome.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+You are free to use, modify, and distribute this project under the terms of the GPL-3.0 License. Any redistributed or modified version must also remain open source under the same license.
 
 ---
 
-## License
+👨‍🏫 Author
 
-GNU 3 License
+Draven Ashcroft
+
+Bio Lecturer – DIPS (Chain of Institutions)
+
+- M.Sc. (Agricultural Entomology)
+- ASRB–NET Qualified
+
+---
+
+🙏 Credits
+
+Special thanks to the AI tools that assisted throughout development:
+
+- OpenAI (ChatGPT) — Debugging, scientific review, and refinement
+- Claude AI — Code implementation and optimization
+- Kimi AI — Initial project draft and early development
 
 ---
 
 <p align="center">
-  Built for molecular biology education, scientific visualization, and open-source learning.
+Made with ❤️ for Biology Education & Open Science
 </p>
+```
