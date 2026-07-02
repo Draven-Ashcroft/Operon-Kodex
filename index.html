@@ -390,6 +390,38 @@
     box-shadow: none;
   }
 
+  /* Pending state — arrow is disabled but induction is actively running.
+     Distinct from the plain "not started yet" disabled look, so it reads
+     as "working" rather than "broken" while students are watching. */
+  .phase-arrow.pending:disabled {
+    opacity: 0.55;
+    animation: phaseArrowPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes phaseArrowPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.35); }
+    50%      { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+  }
+
+  /* Live status line under the arrow — visible text, not a hover tooltip,
+     since tooltips don't show on touchscreens/projectors during class. */
+  .phase-status {
+    display: block;
+    min-height: 1.4em;
+    max-width: 92px;
+    font-size: clamp(7px, 0.8vw, 8.5px);
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    text-align: center;
+    color: rgba(180,220,210,0.68);
+    font-family: 'Courier New', monospace;
+    font-style: italic;
+  }
+  .phase-status.ready {
+    color: #44eeaa;
+    font-style: normal;
+    font-weight: 600;
+  }
+
   /* Reset button — matches step-btn design, sits beside zoom */
   .reset-btn {
     width: clamp(26px, 3.6vh, 38px);
@@ -1207,6 +1239,7 @@
   <div class="phase-nav" id="phase-nav">
     <span class="phase-indicator" id="phase-label">Phase&nbsp;1</span>
     <button class="phase-arrow" id="phase-next" title="Phase 2 — activate Lactose first">❯</button>
+    <span class="phase-status" id="phase-status"></span>
   </div>
 
 </div><!-- /left-strip -->
@@ -3171,6 +3204,7 @@
     LAC_IMPORT.timers = [];
     LAC_IMPORT.particles = [];
     showNarrative('Permease increases membrane permeability', true);
+    setPhaseNextStage('Lactose entering cell…');
     LAC_CHANNELS.forEach(ch => scheduleChannelLoop(ch, ch.spawnOffset));
     LAC_IMPORT.rafId = requestAnimationFrame(tickLacImport);
   }
@@ -3210,6 +3244,7 @@
 
   const BGAL_POS = { x: 205, y: 88 };   // must match SVG translate
   const REPRESSOR_POS = { x: 92, y: 75 };
+  const BGAL_ROTOR = document.getElementById('betagal-rotor');  // cached once — avoid per-frame getElementById in rAF loops
 
   // Ease functions
 
@@ -3241,8 +3276,7 @@
   function tickBgalRotor(now) {
     if (!BGAL.active) return;
     BGAL.rotAngle = (BGAL.rotAngle + 0.25) % 360;  // ~15 deg/sec at 60fps
-    const rotor = document.getElementById('betagal-rotor');
-    if (rotor) rotor.setAttribute('transform', `rotate(${BGAL.rotAngle.toFixed(1)})`);
+    if (BGAL_ROTOR) BGAL_ROTOR.setAttribute('transform', `rotate(${BGAL.rotAngle.toFixed(1)})`);
     BGAL.rafId = requestAnimationFrame(tickBgalRotor);
   }
 
@@ -3296,6 +3330,7 @@
 
     // Step 1 — brief allolactose binding flash at repressor site
     showNarrative('allolactose binds LacI → repressor changes shape', true);
+    setPhaseNextStage('Allolactose binding repressor…');
 
     // Draw a small green flash ring around the repressor (x=92, y=75)
     const ring = document.createElementNS(SVG_NS, 'circle');
@@ -3329,6 +3364,7 @@
       if (STATE.condition !== 'lactose') { onComplete && onComplete(); return; }
       STATE.inductionPhase = 'releasing';
       showNarrative('Repressor released · operator unblocked', true);
+      setPhaseNextStage('Repressor releasing…');
 
       releaseRepressor(() => {          // existing function — drifts upward
         STATE.inductionPhase = 'free';
@@ -3370,6 +3406,7 @@
         if (!BGAL.active) return;
         // — Stage 2: hub flash (conformational change) —
         showNarrative('lactose → β-gal → glucose + galactose + allolactose', true);
+        setPhaseNextStage('β-gal cleaving lactose…');
         const hub = document.querySelector('#betagal circle:nth-child(6)');
         const hubOrig = hub ? hub.getAttribute('fill-opacity') : null;
         if (hub) {
@@ -3382,8 +3419,7 @@
           if (!flashStart) flashStart = now;
           const ft = Math.min((now - flashStart) / 200, 1);
           BGAL.rotAngle = (BGAL.rotAngle + 1.2) % 360;
-          const rotor = document.getElementById('betagal-rotor');
-          if (rotor) rotor.setAttribute('transform', `rotate(${BGAL.rotAngle.toFixed(1)})`);
+          if (BGAL_ROTOR) BGAL_ROTOR.setAttribute('transform', `rotate(${BGAL.rotAngle.toFixed(1)})`);
           if (ft < 1) requestAnimationFrame(flashTick);
           else {
             // restore hub
@@ -3990,6 +4026,12 @@
     let startTime = null;
     let activeGene = null;
 
+    // Perf: mRNA path is built incrementally (appended) instead of being
+    // reconstructed from scratch every frame — same points, far less work
+    // as the strand grows toward ~90 segments over a single elongation.
+    let mrnaPathD      = `M ${TX.mrnaStartX},${TX.mrnaY}`;
+    let mrnaStepsBuilt = 0;
+
     // ── Phase 0: promoter → operator → lacZ ──
     let phase0Start = null;
     function tickPhase0(now) {
@@ -4027,16 +4069,21 @@
       // Move traveller — offset from PHASE0_START so position is continuous
       TX.rnapTraveller.setAttribute('transform', `translate(${currentX - PHASE0_START}, 0)`);
 
-      // Grow mRNA strand
+      // Grow mRNA strand — append only the newly-crossed segments (currentX
+      // is monotonically non-decreasing within one elongation cycle, so
+      // previously-built points never change) instead of rebuilding the
+      // whole path string+DOM write every single frame.
       if (currentX > TX.mrnaStartX) {
-        let d = `M ${TX.mrnaStartX},${TX.mrnaY}`;
         const steps = Math.floor((currentX - TX.mrnaStartX) / 1.8);
-        for (let i = 1; i <= steps; i++) {
-          const px = TX.mrnaStartX + i * 1.8;
-          const py = TX.mrnaY + Math.sin(i * 1.2) * 1.5;
-          d += ` L ${px.toFixed(1)},${py.toFixed(1)}`;
+        if (steps > mrnaStepsBuilt) {
+          for (let i = mrnaStepsBuilt + 1; i <= steps; i++) {
+            const px = TX.mrnaStartX + i * 1.8;
+            const py = TX.mrnaY + Math.sin(i * 1.2) * 1.5;
+            mrnaPathD += ` L ${px.toFixed(1)},${py.toFixed(1)}`;
+          }
+          mrnaStepsBuilt = steps;
+          TX.mrnaEl.setAttribute('d', mrnaPathD);
         }
-        TX.mrnaEl.setAttribute('d', d);
       }
 
       // Sequential gene activation glow
@@ -5303,10 +5350,21 @@
   }
 
   // ── Phase navigation wiring ──
-  const phasePrev  = document.getElementById('phase-prev');
-  const phaseNext  = document.getElementById('phase-next');
-  const phaseLabel = document.getElementById('phase-label');
+  const phasePrev   = document.getElementById('phase-prev');
+  const phaseNext   = document.getElementById('phase-next');
+  const phaseLabel  = document.getElementById('phase-label');
+  const phaseStatus = document.getElementById('phase-status');
   let currentPhase = 1;
+  let phaseNextStage = '';  // live status text while lactose induction is in progress
+
+  // Called from the induction sequence (startLacImport / runBgalCycle /
+  // triggerLacIInduction) to post a human-readable "what's happening now"
+  // line under the arrow — visible text, not a hover tooltip, so it reads
+  // during a live class/projector session instead of just looking stuck.
+  function setPhaseNextStage(text) {
+    phaseNextStage = text;
+    updatePhaseNavState();
+  }
 
   // ── Full reset — returns to Phase 1, static condition ──
   function doReset() {
@@ -5337,8 +5395,9 @@
     currentPhase = n;
     if (n === 2) {
       if (phasePrev) phasePrev.disabled = false;
-      if (phaseNext) phaseNext.disabled = true;
+      if (phaseNext) { phaseNext.disabled = true; phaseNext.classList.remove('pending'); }
       if (phaseLabel) phaseLabel.textContent = 'Phase 2';
+      if (phaseStatus) { phaseStatus.textContent = ''; phaseStatus.classList.remove('ready'); }
       // Hide Phase 1 controls, show Phase 2 dots
       document.getElementById('controls').style.display = 'none';
       document.getElementById('p2-controls').classList.add('visible');
@@ -5373,11 +5432,36 @@
   // Enable → arrow only when lactose condition is active AND transcription is running
   function updatePhaseNavState() {
     if (phaseNext) {
+      // Fix: must be 'free' specifically — not just "not idle". Loosely
+      // checking != idle/particles-drifting used to work only because
+      // updatePhaseNavState() was solely called once at the very end.
+      // Now that live status updates call it at every induction stage
+      // (bound/releasing too), a loose check would enable the arrow
+      // ~16s early, mid-induction, before transcription even starts.
       const canGoP2 = currentPhase === 1 &&
                       STATE.condition === 'lactose' &&
-                      STATE.inductionPhase !== 'idle' &&
-                      STATE.inductionPhase !== 'particles-drifting';
+                      STATE.inductionPhase === 'free';
       phaseNext.disabled = !canGoP2;
+
+      const inProgress = currentPhase === 1 && STATE.condition === 'lactose' && !canGoP2;
+      phaseNext.classList.toggle('pending', inProgress);
+
+      if (phaseStatus) {
+        if (canGoP2) {
+          phaseStatus.textContent = 'Ready →';
+          phaseStatus.classList.add('ready');
+          phaseNext.title = 'Phase 2 — ready';
+        } else if (inProgress) {
+          phaseStatus.textContent = phaseNextStage || 'Lactose active — starting…';
+          phaseStatus.classList.remove('ready');
+          phaseNext.title = phaseNextStage || 'Induction in progress — please wait';
+        } else {
+          phaseStatus.textContent = '';
+          phaseStatus.classList.remove('ready');
+          phaseNextStage = '';
+          phaseNext.title = 'Phase 2 — activate Lactose first';
+        }
+      }
     }
   }
   // updatePhaseNavState is called directly after condition changes and after induction completes
