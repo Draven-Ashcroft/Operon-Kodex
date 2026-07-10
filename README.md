@@ -2,76 +2,31 @@
   <img src="assets/repo-banner.png" alt="Operon-Kodex Banner" width="100%">
 </p>
 
-<h1 align="center">🧬 Operon-Kodex</h1>
+# 🧬 Operon-Kodex
 
-<p align="center">
-Interactive Visualization of the <b>Lac Operon</b><br>
-Gene Regulation • Transcription • Translation • HTML5 Canvas
-</p>
+**Interactive Lac Operon Simulator**
 
 ---
 
-## 📖 Overview
+### 📖 Overview
+**Operon-Kodex** is an open-source educational tool that visualizes bacterial gene regulation. It provides an intuitive, interactive environment to explore the molecular dynamics of the *Lac* operon.
 
-**Operon-Kodex** is an open-source educational visualization of the **Lac Operon**, designed to make bacterial gene regulation intuitive through scientifically accurate, browser-based animation. The project combines clean scientific illustration with interactive storytelling to simplify one of molecular biology's most fundamental regulatory systems.
-
----
-
-## ✨ Features
-
-- Interactive HTML5 Canvas animation
-- Scientifically accurate visualization
-- Step-by-step gene regulation workflow
-- Transcription and translation animation
-- Responsive, browser-based experience
-- No external libraries or frameworks
+### ✨ Features
+* **Dynamic Visualization**: Scientifically accurate HTML5 Canvas animations of the *Lac* operon.
+* **Regulatory Control**: Interactive simulation of repressor activity, operator binding, and allolactose induction.
+* **Gene Expression**: Visualize the transcription and translation of *lacZ*, *lacY*, and *lacA*.
+* **Metabolic Modeling**: Real-time Lactose ON/OFF metabolism states.
+* **Accessible Interface**: Browser-based, responsive design requiring no external frameworks.
 
 ---
 
-## 🧬 Biological Workflow
+### 📜 License
+GPL-3.0
 
-- LacI repressor regulation
-- Operator activation
-- RNA polymerase binding
-- Allolactose as Inducer
-- Transcription of **lacZ**, **lacY**, and **lacA**
-- Functional products of **lacZ**, **lacY**, and **lacA** 
-- Lactose ON/OFF Metabolism 
+### 👨‍🏫 Author
+**Draven Ashcroft** | DIPS Chain of Institutions, Tanda
 
 ---
 
-## 📜 License
-
-**GNU General Public License v3.0 (GPL-3.0)**.
-
----
-
-## 👨‍🏫 Author
-
-**Draven Ashcroft**
-
-**M.Sc. Agricultural Entomology**  
-**ASRB–NET Qualified**  
-**DIPS Chain of Institutions, Tanda**
-
----
-
-## 🙏 Acknowledgements
-
-Special thanks to:
-
-- **OpenAI (ChatGPT)** — scientific review, debugging, and refinement
-- **Anthropic Claude** — implementation assistance
-- **Google Gemini** — brainstorming and idea exploration
-
-Inspired by **BioRender**, **NCERT Biology**, and modern scientific visualization principles.
-
----
-
-<p align="center">
-
-### 🧬 Operon-Kodex
-
-**Decoding Gene Regulation.**
-
-</p>
+### 🙏 Acknowledgements
+Developed with technical support from OpenAI, Anthropic, and Google. Inspired by NCERT Biology and modern scientific visualization standards.
