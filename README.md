@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/repo-banner.png" alt="Operon-Kodex Banner" width="100%">
+  <img src="assets/repo-banner.jpg" alt="Operon-Kodex Banner" width="100%">
 </p>
 
 # 🧬 Operon-Kodex
