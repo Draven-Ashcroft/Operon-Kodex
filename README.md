@@ -26,8 +26,9 @@ Interactive Lac operon simulator visualizing bacterial gene regulation and induc
 
 ## 🛠️ Credits & Acknowledgments
 
-* **Claude Sonnet:** Debugging, code generation & architecture.
-* **Replit:** Code improvisation & rapid prototyping.
+* **Claude Sonnet:** Code architecture.
+* **Open AI:** Debugging. 
+* **Moonshot AI :** Code improvisation & rapid prototyping.
 * **OpenAI:** Scientific debugging, testing & logic optimization.
 
 ---
